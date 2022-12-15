@@ -7,7 +7,7 @@ struct StateMachine
     map::Dict
     actions::Dict
     current::AbstractString
-    terminal::Union{AbstractString, Void}
+    terminal::Union{AbstractString, Nothing}
     StateMachine() = new(Dict(), Dict(), "none", nothing)
 end
 
