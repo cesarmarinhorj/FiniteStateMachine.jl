@@ -15,7 +15,7 @@ function state_machine(model::Dict)
             end
         end
         if !haskey(fsm.map, event["name"])
-            fsm.map[event["name"]] = @compat Dict()
+            fsm.map[event["name"]] = Dict()
         end
 
         # Use "to" if it has been specified; otherwise, this is a no-op
@@ -35,7 +35,7 @@ function state_machine(model::Dict)
         # Initial state can be specified as a string or Dict.
         # If the initial event has not been specified, default to "startup".
         if isa(model["initial"], AbstractString)
-            initial = @compat Dict{AbstractString, Any}(
+            initial = Dict{AbstractString, Any}(
                 "state" => model["initial"],
                 "event" => "startup",
             )

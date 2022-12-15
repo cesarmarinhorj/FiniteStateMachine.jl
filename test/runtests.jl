@@ -1,6 +1,5 @@
 using FiniteStateMachine
 using Base.Test
-using Compat
 
 include("test_state_machine.jl")
 

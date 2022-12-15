@@ -1,9 +1,7 @@
-using Compat
-
-fsm = state_machine(@compat Dict{AbstractString, Any}(
+fsm = state_machine(Dict{AbstractString, Any}(
     "initial" => "first",
     "final" => "fourth",
-    "events" => @compat( [ Dict{AbstractString, Any}(
+    "events" => ( [ Dict{AbstractString, Any}(
             "name" => "hop",
             "from" => "first",
             "to" => "second"
@@ -17,7 +15,7 @@ fsm = state_machine(@compat Dict{AbstractString, Any}(
             "to" => "fourth"
         )
     ]),
-    "callbacks" => @compat Dict{AbstractString, Any}(
+    "callbacks" => Dict{AbstractString, Any}(
         "onbeforeevent" => (fsm::StateMachine, args...) -> 1,
         "onafterevent" => (fsm::StateMachine, args...) -> 1 + 1,
         "onbeforejump" => (fsm::StateMachine, args...) -> 1 + 2,
@@ -32,21 +30,21 @@ fsm = state_machine(@compat Dict{AbstractString, Any}(
 
 @test fsm.current == "first"
 @test fsm.terminal == "fourth"
-@test fsm.map == @compat( Dict{AbstractString, Any}(
-    "startup" => @compat( Dict("none" => "first")),
-    "skip" => @compat( Dict("second" => "third")),
-    "jump" => @compat( Dict("third" => "fourth")),
-    "hop" => @compat( Dict("first" => "second"))
+@test fsm.map == ( Dict{AbstractString, Any}(
+    "startup" => ( Dict("none" => "first")),
+    "skip" => ( Dict("second" => "third")),
+    "jump" => ( Dict("third" => "fourth")),
+    "hop" => ( Dict("first" => "second"))
 ))
 
-dfsm = state_machine(@compat Dict{AbstractString, Any}(
-    "initial" => @compat( Dict{AbstractString, Any}(
+dfsm = state_machine(Dict{AbstractString, Any}(
+    "initial" => ( Dict{AbstractString, Any}(
         "state" => "first",
         "event" => "dance",
         "defer" => true,
     )),
     "terminal" => "fourth",
-    "events" => @compat [Dict{AbstractString, Any}(
+    "events" => [Dict{AbstractString, Any}(
             "name" => "hop",
             "from" => "first",
             "to" => "second",
@@ -68,12 +66,12 @@ dfsm = state_machine(@compat Dict{AbstractString, Any}(
 @test dfsm.current == "none"
 @test dfsm.terminal == "fourth"
 
-mfsm = state_machine(@compat Dict{AbstractString, Any}(
-    "initial" => @compat( Dict{AbstractString, Any}(
+mfsm = state_machine(Dict{AbstractString, Any}(
+    "initial" => ( Dict{AbstractString, Any}(
         "state" => "first",
         "defer" => false,
     )),
-    "events" => @compat( [Dict{AbstractString, Any}(
+    "events" => ( [Dict{AbstractString, Any}(
             "name" => "hop",
             "from" => ["first", "third"],
             "to" => "second",
@@ -86,7 +84,7 @@ mfsm = state_machine(@compat Dict{AbstractString, Any}(
             "from" => "third",
         )
     ]),
-    "callbacks" => @compat( Dict{AbstractString, Any}(
+    "callbacks" => ( Dict{AbstractString, Any}(
         "onevent" => (fsm::StateMachine, args...) -> 1,
         "onstate" => (fsm::StateMachine, args...) -> -1,
     ))
