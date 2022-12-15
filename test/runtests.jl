@@ -1,5 +1,5 @@
 using FiniteStateMachine
-using Base.Test
+using Test
 
 include("test_state_machine.jl")
 
