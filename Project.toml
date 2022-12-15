@@ -1,0 +1,4 @@
+name = "FiniteStateMachine"
+uuid = "57fbad09-461b-47cc-af04-e6786dccd98f"
+authors = ["Cesar Marinho <cesarmarinhorj@gmail.com>"]
+version = "0.1.0"
