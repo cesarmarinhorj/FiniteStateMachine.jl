@@ -7,63 +7,63 @@ function state_machine(model::Dict)
     function add(event::Dict)
 
         # Multiple source states are allowed
-        if haskey(event, "from")
-            if isa(event["from"], Array)
-                from = event["from"]
+        if haskey(event, :from)
+            if isa(event[:from], Array)
+                from = event[:from]
             else
-                from = [event["from"]]
+                from = [event[:from]]
             end
         end
-        if !haskey(fsm.map, event["name"])
-            fsm.map[event["name"]] = Dict()
+        if !haskey(fsm.map, event[:name])
+            fsm.map[event[:name]] = Dict()
         end
 
-        # Use "to" if it has been specified; otherwise, this is a no-op
+        # Use :to if it has been specified; otherwise, this is a no-op
         # transition (before and after states are the same)
         for f in from
-            if haskey(event, "to")
-                fsm.map[event["name"]][f] = event["to"]
+            if haskey(event, :to)
+                fsm.map[event[:name]][f] = event[:to]
             else
-                fsm.map[event["name"]][f] = f
+                fsm.map[event[:name]][f] = f
             end
         end
     end
 
     # Set up initial state and startup event
-    if haskey(model, "initial")
+    if haskey(model, :initial)
 
         # Initial state can be specified as a string or Dict.
-        # If the initial event has not been specified, default to "startup".
-        if isa(model["initial"], AbstractString)
-            initial = Dict{AbstractString, Any}(
-                "state" => model["initial"],
-                "event" => "startup",
+        # If the initial event has not been specified, default to :startup.
+        if isa(model[:initial], Symbol)
+            initial = Dict{Any, Any}(
+                :state => model[:initial],
+                :event => :startup,
             )
         else
-            initial = model["initial"]
-            if !haskey(initial, "event")
-                initial["event"] = "startup"
+            initial = model[:initial]
+            if !haskey(initial, :event)
+                initial[:event] = :startup
             end
         end
 
         # Add the startup event to the map
-        add(Dict{AbstractString, Any}(
-            "name" => initial["event"],
-            "from" => "none",
-            "to" => initial["state"],
+        add(Dict{Any, Any}(
+            :name => initial[:event],
+            :from => :none,
+            :to => initial[:state],
         ))
     end
 
     # Terminal (final) state
-    if haskey(model, "terminal")
-        fsm.terminal = model["terminal"]
-    elseif haskey(model, "final")
-        fsm.terminal = model["final"]
+    if haskey(model, :terminal)
+        fsm.terminal = model[:terminal]
+    elseif haskey(model, :final)
+        fsm.terminal = model[:final]
     end
 
     # Write user-specified events to the map
-    if haskey(model, "events")
-        for event in model["events"]
+    if haskey(model, :events)
+        for event in model[:events]
             add(event)
         end
     end
@@ -73,8 +73,8 @@ function state_machine(model::Dict)
         fsm.actions[name] = () -> begin
             from = fsm.current
             to = haskey(minimap, from) ? minimap[from] : from
-            if !fire(fsm, "can", name)
-                error(name * " is not accessible from state " * fsm.current)
+            if !fire(fsm, :can, name)
+                error(string(String(name), " is not accessible from state ", String(fsm.current)))
             elseif from == to
                 after_event(fsm, name, from, to)
             else
@@ -88,15 +88,15 @@ function state_machine(model::Dict)
     end
 
     # Set up user-specified callbacks, if any were provided
-    if haskey(model, "callbacks")
-        for (name, callback) in model["callbacks"]
+    if haskey(model, :callbacks)
+        for (name, callback) in model[:callbacks]
             fsm.actions[name] = callback
         end
     end
 
     # Fire (or defer firing of) the initial event
-    if !haskey(initial, "defer") || !initial["defer"]
-        fire(fsm, initial["event"])
+    if !haskey(initial, :defer) || !initial[:defer]
+        fire(fsm, initial[:event])
     end
 
     fsm
